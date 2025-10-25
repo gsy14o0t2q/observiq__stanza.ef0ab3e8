@@ -121,7 +121,7 @@ func splitField(s string) ([]string, error) {
 			}
 			state = InQuote
 			quoteChar = c
-			tokenStart = i
+			tokenStart = i + 1
 		case InQuote:
 			if c == quoteChar {
 				fields = append(fields, s[tokenStart:i])
@@ -145,15 +145,16 @@ func splitField(s string) ([]string, error) {
 		case InUnbracketedToken:
 			if c == '.' {
 				fields = append(fields, s[tokenStart:i])
-				tokenStart = i
+				tokenStart = i + 1
 			} else if c == '[' {
+				fields = append(fields, s[tokenStart:i])
 				state = InBracket
 			}
 		}
 	}
 
 	switch state {
-	case InBracket:
+	case InBracket, OutQuote:
 		return nil, fmt.Errorf("found unclosed left bracket")
 	case InQuote:
 		if quoteChar == '"' {
