@@ -108,12 +108,14 @@ func (f *InputOperator) poll(ctx context.Context) {
 	f.maxBatchFiles = f.MaxConcurrentFiles / 2
 	var matches []string
 	if len(f.queuedMatches) > f.maxBatchFiles {
-		matches, f.queuedMatches = f.queuedMatches[:f.maxBatchFiles], f.queuedMatches[f.maxBatchFiles+1:]
+		matches, f.queuedMatches = f.queuedMatches[:f.maxBatchFiles], f.queuedMatches[f.maxBatchFiles:]
 	} else if len(f.queuedMatches) > 0 {
 		matches, f.queuedMatches = f.queuedMatches, make([]string, 0)
 	} else {
+		// Increment the generation on all known readers
+		// This is done here because the next generation is about to start
 		for i := 0; i < len(f.knownFiles); i++ {
-			f.knownFiles[i].generation--
+			f.knownFiles[i].generation++
 		}
 
 		// Get the list of paths on disk
@@ -158,7 +160,7 @@ func (f *InputOperator) poll(ctx context.Context) {
 	OUTER:
 		for _, oldReader := range f.lastPollReaders {
 			for _, reader := range readers {
-				if oldReader.Fingerprint.StartsWith(reader.Fingerprint) {
+				if reader.Fingerprint.StartsWith(oldReader.Fingerprint) {
 					continue OUTER
 				}
 			}
