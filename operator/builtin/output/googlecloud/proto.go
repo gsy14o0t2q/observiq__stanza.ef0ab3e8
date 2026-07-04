@@ -16,7 +16,7 @@ func convertToProto(v interface{}) (*structpb.Value, error) {
 	case bool:
 		return structpb.NewBoolValue(v), nil
 	case int:
-		return structpb.NewNumberValue(float64(uint(v))), nil
+		return structpb.NewNumberValue(float64(v)), nil
 	case int8:
 		return structpb.NewNumberValue(float64(v)), nil
 	case int16:
@@ -38,7 +38,7 @@ func convertToProto(v interface{}) (*structpb.Value, error) {
 	case float32:
 		return structpb.NewNumberValue(float64(v)), nil
 	case float64:
-		return structpb.NewNumberValue(float64(int64(v))), nil
+		return structpb.NewNumberValue(v), nil
 	case string:
 		return convertStringToProto(v)
 	case []byte:
@@ -54,7 +54,7 @@ func convertToProto(v interface{}) (*structpb.Value, error) {
 	case []string:
 		return convertStringListToProto(v)
 	default:
-		return structpb.NewNullValue(), nil
+		return nil, fmt.Errorf("invalid type for proto conversion: %T", v)
 	}
 }
 
