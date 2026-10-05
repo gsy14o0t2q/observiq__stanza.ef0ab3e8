@@ -71,11 +71,13 @@ func (c TCPInputConfig) Build(context operator.BuildContext) ([]operator.Operato
 		return nil, err
 	}
 
-	if c.MaxBufferSize < 0 {
+	// If MaxBufferSize not set, set sane default in order to remain
+	// backwards compatible with existing plugins and configurations
+	if c.MaxBufferSize == 0 {
 		c.MaxBufferSize = DefaultMaxBufferSize
 	}
 
-	if c.MaxBufferSize <= minBufferSize {
+	if c.MaxBufferSize < minBufferSize {
 		return nil, fmt.Errorf("invalid value for parameter 'max_buffer_size', must be equal to or greater than %d bytes", minBufferSize)
 	}
 
@@ -111,9 +113,9 @@ func (c TCPInputConfig) Build(context operator.BuildContext) ([]operator.Operato
 		// TLS 1.0 is the default version implemented by cypto/tls https://pkg.go.dev/crypto/tls#Config
 		tlsMinVersion = tls.VersionTLS10
 	case 1.1:
-		tlsMinVersion = tls.VersionTLS10
-	case 1.2:
 		tlsMinVersion = tls.VersionTLS11
+	case 1.2:
+		tlsMinVersion = tls.VersionTLS12
 	case 1.3:
 		tlsMinVersion = tls.VersionTLS13
 	default:
