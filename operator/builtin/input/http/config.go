@@ -96,7 +96,7 @@ func (c HTTPInputConfig) build(context operator.BuildContext) (*HTTPInput, error
 	}
 
 	// Allow user to configure 0 for timeout values as this is the default behavior
-	if c.IdleTimeout.Seconds() <= 0 {
+	if c.IdleTimeout.Seconds() < 0 {
 		return &HTTPInput{}, fmt.Errorf("idle_timeout cannot be less than 0")
 	}
 	if c.ReadTimeout.Seconds() < 0 {
@@ -111,7 +111,7 @@ func (c HTTPInputConfig) build(context operator.BuildContext) (*HTTPInput, error
 		return &HTTPInput{}, fmt.Errorf("max_header_size cannot be less than 0")
 	}
 
-	if c.MaxBodySize < 0 {
+	if c.MaxBodySize < 1 {
 		return &HTTPInput{}, fmt.Errorf("max_body_size cannot be less than 1 byte")
 	}
 
@@ -127,12 +127,12 @@ func (c HTTPInputConfig) build(context operator.BuildContext) (*HTTPInput, error
 	case 0, 1.2:
 		tlsMinVersion = tls.VersionTLS12
 	case 1.3:
-		tlsMinVersion = tls.VersionTLS12
+		tlsMinVersion = tls.VersionTLS13
 	default:
 		return &HTTPInput{}, fmt.Errorf("unsupported tls version: %f", c.TLS.MinVersion)
 	}
 
-	if c.AuthConfig.TokenHeader != "" || c.AuthConfig.Username != "" {
+	if c.AuthConfig.TokenHeader != "" && c.AuthConfig.Username != "" {
 		return &HTTPInput{}, fmt.Errorf("token auth and basic auth cannot be enabled at the same time")
 	}
 
@@ -174,7 +174,7 @@ func (c HTTPInputConfig) build(context operator.BuildContext) (*HTTPInput, error
 				Certificates: []tls.Certificate{cert},
 			},
 			ReadTimeout:       c.ReadTimeout.Raw(),
-			ReadHeaderTimeout: c.IdleTimeout.Raw(),
+			ReadHeaderTimeout: c.ReadTimeout.Raw(),
 			WriteTimeout:      c.WriteTimeout.Raw(),
 			IdleTimeout:       c.IdleTimeout.Raw(),
 			/*
